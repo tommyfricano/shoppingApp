@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "811612575934",
+    "firebase_url": "https://shoppingapp-bcab7-default-rtdb.firebaseio.com",
+    "project_id": "shoppingapp-bcab7",
+    "storage_bucket": "shoppingapp-bcab7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:811612575934:android:e61345c35270ecaa4ce6ef",
+        "android_client_info": {
+          "package_name": "edu.uga.cs.shoppingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "811612575934-p844nnak20bfg5qgcp5kr2nal619rj48.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC0Q_gAB43C9KML66c_t9XrgIHHCVjNI4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "811612575934-p844nnak20bfg5qgcp5kr2nal619rj48.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
