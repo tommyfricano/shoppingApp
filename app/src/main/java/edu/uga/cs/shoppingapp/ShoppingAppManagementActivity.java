@@ -6,25 +6,32 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class ShoppingAppManagementActivity extends AppCompatActivity {
+public class ShoppingAppManagementActivity extends AppCompatActivity implements BottomNavigationView.OnItemSelectedListener {
 
     private static final String DEBUG_TAG = "ManagementActivity";
 
     private TextView signedInTextView;
+    BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_app_management);
 
-        Log.d( DEBUG_TAG, "JobLeadManagementActivity.onCreate()" );
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+
+        bottomNavigationView.setOnItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.cart);
+        Log.d( DEBUG_TAG, "ShoppingAppManagementActivity.onCreate()" );
 
 
         // Setup a listener for a change in the sign in status (authentication status change)
@@ -37,52 +44,74 @@ public class ShoppingAppManagementActivity extends AppCompatActivity {
                 if( currentUser != null ) {
                     // User is signed in
                     Log.d(DEBUG_TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
-                    String userEmail = currentUser.getEmail();
-                    signedInTextView.setText( "Signed in as: " + userEmail );
+//                    String userEmail = currentUser.getEmail();
+//                    signedInTextView.setText( "Signed in as: " + userEmail );
                 } else {
                     // User is signed out
                     Log.d( DEBUG_TAG, "onAuthStateChanged:signed_out" );
-                    signedInTextView.setText( "Signed in as: not signed in" );
+//                    signedInTextView.setText( "Signed in as: not signed in" );
                 }
             }
         });
     }
 
+    CartFragment cartFragment = new CartFragment();
+    RecentsFragment recentsFragment = new RecentsFragment();
+    CostFragment costFragment = new CostFragment();
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.cart:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, cartFragment).commit();
+                return true;
+
+            case R.id.recents:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, recentsFragment).commit();
+                return true;
+
+            case R.id.pay:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, costFragment).commit();
+                return true;
+        }
+        return false;
+    }
 
     // These activity callback methods are not needed and are for edational purposes only
     @Override
     protected void onStart() {
-        Log.d( DEBUG_TAG, "JobLead: ManagementActivity.onStart()" );
+        Log.d( DEBUG_TAG, "ShoppingApp: ManagementActivity.onStart()" );
         super.onStart();
     }
 
     @Override
     protected void onResume() {
-        Log.d( DEBUG_TAG, "JobLead: ManagementActivity.onResume()" );
+        Log.d( DEBUG_TAG, "ShoppingApp: ManagementActivity.onResume()" );
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        Log.d( DEBUG_TAG, "JobLead: ManagementActivity.onPause()" );
+        Log.d( DEBUG_TAG, "ShoppingApp: ManagementActivity.onPause()" );
         super.onPause();
     }
 
     @Override
     protected void onStop() {
-        Log.d( DEBUG_TAG, "JobLead: ManagementActivity.onStop()" );
+        Log.d( DEBUG_TAG, "ShoppingApp: ManagementActivity.onStop()" );
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.d( DEBUG_TAG, "JobLead: ManagementActivity.onDestroy()" );
+        Log.d( DEBUG_TAG, "ShoppingApp: ManagementActivity.onDestroy()" );
         super.onDestroy();
     }
 
     @Override
     protected void onRestart() {
-        Log.d( DEBUG_TAG, "JobLead: ManagementActivity.onRestart()" );
+        Log.d( DEBUG_TAG, "ShoppingApp: ManagementActivity.onRestart()" );
         super.onRestart();
     }
 }
