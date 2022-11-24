@@ -32,17 +32,11 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
     class ItemHolder extends RecyclerView.ViewHolder {
 
         TextView item;
-//        TextView phone;
-//        TextView url;
-//        TextView comments;
 
         public ItemHolder(View itemView ) {
             super(itemView);
 
             item = itemView.findViewById( R.id.itemName);
-//            phone = itemView.findViewById( R.id.phone );
-//            url = itemView.findViewById( R.id.url );
-//            comments = itemView.findViewById( R.id.comments );
         }
     }
 
@@ -61,22 +55,12 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
         Log.d( DEBUG_TAG, "onBindViewHolder: " + item );
 
         String key = item.getKey();
-        String company = item.getName();
-//        String phone = jobLead.getPhone();
-//        String url = jobLead.getUrl();
-//        String comments = jobLead.getComments();
 
         holder.item.setText( item.getName());
-//        holder.phone.setText( jobLead.getPhone() );
-//        holder.url.setText( jobLead.getUrl() );
-//        holder.comments.setText( jobLead.getComments() );
 
         // We can attach an OnClickListener to the itemView of the holder;
         // itemView is a public field in the Holder class.
         // It will be called when the user taps/clicks on the whole item, i.e., one of
-        // the job leads shown.
-        // This will indicate that the user wishes to edit (modify or delete) this item.
-        // We create and show an EditJobLeadDialogFragment.
 //        holder.itemView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {

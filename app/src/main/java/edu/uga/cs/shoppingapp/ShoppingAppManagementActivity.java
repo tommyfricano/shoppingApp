@@ -30,7 +30,7 @@ public class ShoppingAppManagementActivity extends AppCompatActivity implements 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
         bottomNavigationView.setOnItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.recents);
+        bottomNavigationView.setSelectedItemId(R.id.cart);
         Log.d( DEBUG_TAG, "ShoppingAppManagementActivity.onCreate()" );
 
 

@@ -129,9 +129,6 @@ public class CartFragment extends Fragment implements AddItemDialogFragment.AddI
         // Set up a listener (event handler) to receive a value for the database reference.
         // This type of listener is called by Firebase once by immediately executing its onDataChange method
         // and then each time the value at Firebase changes.
-        //
-        // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
-        // to maintain job leads.
         myRef.addValueEventListener( new ValueEventListener() {
 
             @Override
@@ -167,7 +164,6 @@ public class CartFragment extends Fragment implements AddItemDialogFragment.AddI
         // if this is done for the first time).  Then, we set the value in the newly created
         // list node to store the new job lead.
         // This listener will be invoked asynchronously, as no need for an AsyncTask, as in
-        // the previous apps to maintain job leads.
         myRef.push().setValue( item )
                 .addOnSuccessListener( new OnSuccessListener<Void>() {
                     @Override
