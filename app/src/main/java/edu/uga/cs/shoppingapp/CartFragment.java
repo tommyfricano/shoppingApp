@@ -113,14 +113,14 @@ public class CartFragment extends Fragment implements AddItemDialogFragment.AddI
             }
         });
 
-        // initialize the Job Lead list
+        // initialize the items list
         itemsList = new ArrayList<Item>();
 
         // use a linear layout manager for the recycler view
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        // the recycler adapter with job leads is empty at first; it will be updated later
+        // the recycler adapter with itemss is empty at first; it will be updated later
         recyclerAdapter = new ItemRecyclerAdapter( itemsList, getActivity(), getChildFragmentManager());
         recyclerView.setAdapter( recyclerAdapter );
 
