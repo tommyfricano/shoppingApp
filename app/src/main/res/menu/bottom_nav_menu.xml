@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
         <item
             android:id="@+id/cart"
-            android:title="Cart"
+            android:title="List"
             android:icon="@drawable/ic_recent_foreground"/>
         <item
             android:id="@+id/recents"
-            android:title="Recents"
+            android:title="Cart"
             android:icon="@drawable/ic_cart_foreground"/>
         <item
             android:id="@+id/pay"

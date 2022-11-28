@@ -5,7 +5,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,11 +38,23 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
     class ItemHolder extends RecyclerView.ViewHolder {
 
         TextView item;
+        Button add2Cart;
+
 
         public ItemHolder(View itemView ) {
             super(itemView);
 
             item = itemView.findViewById( R.id.itemName);
+            add2Cart = itemView.findViewById(R.id.addToCartBtn);
+            add2Cart.setOnClickListener( new AddToCartButtonClickListener());
+        }
+    }
+
+    private class AddToCartButtonClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            Toast.makeText( view.getContext(), "Added to cart",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
