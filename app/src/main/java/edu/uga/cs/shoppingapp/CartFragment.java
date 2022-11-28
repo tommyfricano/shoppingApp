@@ -34,8 +34,8 @@ import java.util.List;
  * Use the {@link CartFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CartFragment extends Fragment implements AddItemDialogFragment.AddItemDialogListener{
-//        EditJobLeadDialogFragment.EditJobLeadDialogListener{
+public class CartFragment extends Fragment implements AddItemDialogFragment.AddItemDialogListener,
+        EditItemDialogFragment.EditItemDialogListener{
 
     public static final String DEBUG_TAG = "ReviewJobLeadsActivity";
 
@@ -119,7 +119,7 @@ public class CartFragment extends Fragment implements AddItemDialogFragment.AddI
         recyclerView.setLayoutManager(layoutManager);
 
         // the recycler adapter with job leads is empty at first; it will be updated later
-        recyclerAdapter = new ItemRecyclerAdapter( itemsList, getActivity());
+        recyclerAdapter = new ItemRecyclerAdapter( itemsList, getActivity(), getChildFragmentManager());
         recyclerView.setAdapter( recyclerAdapter );
 
         // get a Firebase DB instance reference
@@ -199,80 +199,80 @@ public class CartFragment extends Fragment implements AddItemDialogFragment.AddI
                 });
     }
 
-//    public void updateItem( int position, Item item, int action ) {
-//        if( action == EditItemDialogFragment.SAVE ) {
-//            Log.d( DEBUG_TAG, "Updating job lead at: " + position + "(" + jobLead.getCompanyName() + ")" );
-//
-//            // Update the recycler view to show the changes in the updated job lead in that view
-//            recyclerAdapter.notifyItemChanged( position );
-//
-//            // Update this job lead in Firebase
-//            // Note that we are using a specific key (one child in the list)
-//            DatabaseReference ref = database
-//                    .getReference()
-//                    .child( "jobleads" )
-//                    .child( jobLead.getKey() );
-//
-//            // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
-//            // to maintain job leads.
-//            ref.addListenerForSingleValueEvent( new ValueEventListener() {
-//                @Override
-//                public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
-//                    dataSnapshot.getRef().setValue( jobLead ).addOnSuccessListener( new OnSuccessListener<Void>() {
-//                        @Override
-//                        public void onSuccess(Void aVoid) {
-//                            Log.d( DEBUG_TAG, "updated job lead at: " + position + "(" + jobLead.getCompanyName() + ")" );
-//                            Toast.makeText(getApplicationContext(), "Job lead updated for " + jobLead.getCompanyName(),
-//                                    Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//                }
-//
-//                @Override
-//                public void onCancelled( @NonNull DatabaseError databaseError ) {
-//                    Log.d( DEBUG_TAG, "failed to update job lead at: " + position + "(" + jobLead.getCompanyName() + ")" );
-//                    Toast.makeText(getApplicationContext(), "Failed to update " + jobLead.getCompanyName(),
-//                            Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        }
-//        else if( action == EditJobLeadDialogFragment.DELETE ) {
-//            Log.d( DEBUG_TAG, "Deleting job lead at: " + position + "(" + jobLead.getCompanyName() + ")" );
-//
-//            // remove the deleted job lead from the list (internal list in the App)
-//            jobLeadsList.remove( position );
-//
-//            // Update the recycler view to remove the deleted job lead from that view
-//            recyclerAdapter.notifyItemRemoved( position );
-//
-//            // Delete this job lead in Firebase.
-//            // Note that we are using a specific key (one child in the list)
-//            DatabaseReference ref = database
-//                    .getReference()
-//                    .child( "jobleads" )
-//                    .child( jobLead.getKey() );
-//
-//            // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
-//            // to maintain job leads.
-//            ref.addListenerForSingleValueEvent( new ValueEventListener() {
-//                @Override
-//                public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
-//                    dataSnapshot.getRef().removeValue().addOnSuccessListener( new OnSuccessListener<Void>() {
-//                        @Override
-//                        public void onSuccess(Void aVoid) {
-//                            Log.d( DEBUG_TAG, "deleted job lead at: " + position + "(" + jobLead.getCompanyName() + ")" );
-//                            Toast.makeText(getApplicationContext(), "Job lead deleted for " + jobLead.getCompanyName(),
-//                                    Toast.LENGTH_SHORT).show();                        }
-//                    });
-//                }
-//
-//                @Override
-//                public void onCancelled( @NonNull DatabaseError databaseError ) {
-//                    Log.d( DEBUG_TAG, "failed to delete job lead at: " + position + "(" + jobLead.getCompanyName() + ")" );
-//                    Toast.makeText(getApplicationContext(), "Failed to delete " + jobLead.getCompanyName(),
-//                            Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        }
-//    }
+    public void updateItem( int position, Item item, int action ) {
+        if( action == EditItemDialogFragment.SAVE ) {
+            Log.d( DEBUG_TAG, "Updating item at: " + position + "(" + item.getName() + ")" );
+
+            // Update the recycler view to show the changes in the updated job lead in that view
+            recyclerAdapter.notifyItemChanged( position );
+
+            // Update this job lead in Firebase
+            // Note that we are using a specific key (one child in the list)
+            DatabaseReference ref = database
+                    .getReference()
+                    .child( "items" )
+                    .child( item.getKey() );
+
+            // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
+            // to maintain job leads.
+            ref.addListenerForSingleValueEvent( new ValueEventListener() {
+                @Override
+                public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
+                    dataSnapshot.getRef().setValue( item ).addOnSuccessListener( new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d( DEBUG_TAG, "updated item at: " + position + "(" + item.getName() + ")" );
+                            Toast.makeText(getActivity(), "item updated for " + item.getName(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled( @NonNull DatabaseError databaseError ) {
+                    Log.d( DEBUG_TAG, "failed to update item at: " + position + "(" + item.getName() + ")" );
+                    Toast.makeText(getActivity(), "Failed to update " + item.getName(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else if( action == EditItemDialogFragment.DELETE ) {
+            Log.d( DEBUG_TAG, "Deleting item at: " + position + "(" + item.getName() + ")" );
+
+            // remove the deleted job lead from the list (internal list in the App)
+            itemsList.remove( position );
+
+            // Update the recycler view to remove the deleted job lead from that view
+            recyclerAdapter.notifyItemRemoved( position );
+
+            // Delete this job lead in Firebase.
+            // Note that we are using a specific key (one child in the list)
+            DatabaseReference ref = database
+                    .getReference()
+                    .child( "items" )
+                    .child( item.getKey() );
+
+            // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
+            // to maintain job leads.
+            ref.addListenerForSingleValueEvent( new ValueEventListener() {
+                @Override
+                public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
+                    dataSnapshot.getRef().removeValue().addOnSuccessListener( new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d( DEBUG_TAG, "deleted item at: " + position + "(" + item.getName() + ")" );
+                            Toast.makeText(getActivity(), "item deleted for " + item.getName(),
+                                    Toast.LENGTH_SHORT).show();                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled( @NonNull DatabaseError databaseError ) {
+                    Log.d( DEBUG_TAG, "failed to delete item at: " + position + "(" + item.getName() + ")" );
+                    Toast.makeText(getActivity(), "Failed to delete " + item.getName(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 }
