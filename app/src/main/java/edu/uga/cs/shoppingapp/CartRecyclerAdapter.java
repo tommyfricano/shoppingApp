@@ -34,10 +34,16 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
     class ItemHolder extends RecyclerView.ViewHolder {
 
         TextView item;
+        TextView creator;
+        TextView buyer;
+        TextView cost;
 
         public ItemHolder(View itemView ) {
             super(itemView);
 
+            cost = itemView.findViewById(R.id.itemName4);
+            buyer = itemView.findViewById(R.id.itemName3);
+            creator = itemView.findViewById(R.id.itemName2);
             item = itemView.findViewById( R.id.itemName);
         }
     }
@@ -45,7 +51,7 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
     @NonNull
     @Override
     public ItemHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.item, parent, false );
+        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.cart_item, parent, false );
         return new ItemHolder( view );
     }
 
@@ -58,7 +64,14 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
 
         String key = item.getKey();
 
+        String creatorText = "Created by: " + item.getCreator();
+        String buyerText = "Purchased by: "+ item.getBuyer();
+        String costText = "$ " + item.getCost();
+
         holder.item.setText( item.getName());
+        holder.creator.setText(creatorText);
+        holder.buyer.setText(buyerText);
+        holder.cost.setText(costText);
 
         // We can attach an OnClickListener to the itemView of the holder;
         // itemView is a public field in the Holder class.
@@ -67,6 +80,9 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
             @Override
             public void onClick(View v) {
 //                add fragment to items in user list?
+                EditCartItemDialogFragment editCartItemFragment =
+                        EditCartItemDialogFragment.newInstance( holder.getAdapterPosition(), key, item.getName(), item.getCreator(), item.getBuyer(), item.getCost() );
+                editCartItemFragment.show( child, null);
             }
         });
     }

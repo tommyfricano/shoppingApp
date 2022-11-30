@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -12,11 +13,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 // A DialogFragment class to handle job lead additions from the job lead review activity
 // It uses a DialogFragment to allow the input of a new job lead.
 public class AddItemDialogFragment extends DialogFragment {
 
     private EditText itemView;
+    private String userEmail;
 
     public interface AddItemDialogListener {
         void addItem(Item item);
@@ -28,6 +33,9 @@ public class AddItemDialogFragment extends DialogFragment {
         // Create the AlertDialog view
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View layout = inflater.inflate(R.layout.add_item_dialog, getActivity().findViewById(R.id.root));
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        userEmail = user.getEmail();
 
         // get the view objects in the AlertDialog
         itemView = layout.findViewById( R.id.editText1);
@@ -60,7 +68,7 @@ public class AddItemDialogFragment extends DialogFragment {
         public void onClick(DialogInterface dialog, int which) {
             String addedItem = itemView.getText().toString();
 
-            Item item = new Item( addedItem, 0.0 );
+            Item item = new Item( addedItem, 0.0, userEmail,null );
 
             AddItemDialogListener listener = (AddItemDialogListener) getParentFragment();
 

@@ -49,7 +49,6 @@ public class ShoppingAppManagementActivity extends AppCompatActivity implements 
                 } else {
                     // User is signed out
                     Log.d( DEBUG_TAG, "onAuthStateChanged:signed_out" );
-//                    signedInTextView.setText( "Signed in as: not signed in" );
                 }
             }
         });

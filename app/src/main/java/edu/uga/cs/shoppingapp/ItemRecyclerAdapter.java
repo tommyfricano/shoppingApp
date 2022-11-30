@@ -27,8 +27,9 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
     private List<Item> itemList;
     private Context context;
     private FragmentManager child;
+    private String userEmail;
 
-    public ItemRecyclerAdapter(List<Item> itemList, Context context, FragmentManager child ) {
+    public ItemRecyclerAdapter(List<Item> itemList, Context context, FragmentManager child) {
         this.itemList = itemList;
         this.context = context;
         this.child = child;
@@ -38,11 +39,12 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
     class ItemHolder extends RecyclerView.ViewHolder {
 
         TextView item;
+        TextView creator;
 
         public ItemHolder(View itemView ) {
             super(itemView);
-
-            item = itemView.findViewById( R.id.itemName);
+            creator = itemView.findViewById( R.id.itemName2 );
+            item = itemView.findViewById( R.id.itemName );
         }
     }
 
@@ -61,8 +63,10 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
         Log.d( DEBUG_TAG, "onBindViewHolder: " + item );
 
         String key = item.getKey();
+        String creatorText = "Creator: " + item.getCreator();
 
         holder.item.setText( item.getName());
+        holder.creator.setText(creatorText);
 
         // We can attach an OnClickListener to the itemView of the holder;
         // itemView is a public field in the Holder class.
@@ -71,7 +75,7 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
             @Override
             public void onClick(View v) {
                 EditItemDialogFragment editItemFragment =
-                        EditItemDialogFragment.newInstance( holder.getAdapterPosition(), key, item.getName() );
+                        EditItemDialogFragment.newInstance( holder.getAdapterPosition(), key, item.getName(), item.getCreator(), item.getBuyer() );
                 editItemFragment.show( child, null);
             }
         });
