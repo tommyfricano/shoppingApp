@@ -21,11 +21,11 @@
         app:tint="@color/grey" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/recyclerView1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="16dp"
         android:layout_marginRight="20dp"
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,12 +1,8 @@
 package edu.uga.cs.shoppingapp;
 
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
-
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,7 +34,7 @@ import java.util.List;
 public class CartFragment extends Fragment implements AddItemDialogFragment.AddItemDialogListener,
         EditItemDialogFragment.EditItemDialogListener{
 
-    public static final String DEBUG_TAG = "ReviewJobLeadsActivity";
+    public static final String DEBUG_TAG = "CartActivity";
 
     private RecyclerView recyclerView;
     private ItemRecyclerAdapter recyclerAdapter;
@@ -102,7 +97,7 @@ public class CartFragment extends Fragment implements AddItemDialogFragment.AddI
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
         super.onViewCreated( view, savedInstanceState );
 
-        recyclerView = getView().findViewById( R.id.recyclerView );
+        recyclerView = getView().findViewById( R.id.recyclerView1);
 
         FloatingActionButton floatingButton = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton);
         floatingButton.setOnClickListener( new View.OnClickListener() {
@@ -120,7 +115,7 @@ public class CartFragment extends Fragment implements AddItemDialogFragment.AddI
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        // the recycler adapter with itemss is empty at first; it will be updated later
+        // the recycler adapter with items is empty at first; it will be updated later
         recyclerAdapter = new ItemRecyclerAdapter( itemsList, getActivity(), getChildFragmentManager());
         recyclerView.setAdapter( recyclerAdapter );
 
