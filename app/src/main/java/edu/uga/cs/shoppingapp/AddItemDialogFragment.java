@@ -30,7 +30,7 @@ public class AddItemDialogFragment extends DialogFragment {
         final View layout = inflater.inflate(R.layout.add_item_dialog, getActivity().findViewById(R.id.root));
 
         // get the view objects in the AlertDialog
-        itemView = layout.findViewById( R.id.editText1 );
+        itemView = layout.findViewById( R.id.editText1);
 
         // create a new AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);

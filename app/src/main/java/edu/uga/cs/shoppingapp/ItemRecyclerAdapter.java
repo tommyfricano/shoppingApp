@@ -38,25 +38,25 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
     class ItemHolder extends RecyclerView.ViewHolder {
 
         TextView item;
-        Button add2Cart;
+//        Button add2Cart;
 
 
         public ItemHolder(View itemView ) {
             super(itemView);
 
             item = itemView.findViewById( R.id.itemName);
-            add2Cart = itemView.findViewById(R.id.addToCartBtn);
-            add2Cart.setOnClickListener( new AddToCartButtonClickListener());
+//            add2Cart = itemView.findViewById(R.id.addToCartBtn);
+//            add2Cart.setOnClickListener( new AddToCartButtonClickListener());
         }
     }
 
-    private class AddToCartButtonClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            Toast.makeText( view.getContext(), "Added to cart",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private class AddToCartButtonClickListener implements View.OnClickListener {
+//        @Override
+//        public void onClick(View view) {
+//            Toast.makeText( view.getContext(), "Added to cart",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     @NonNull
     @Override

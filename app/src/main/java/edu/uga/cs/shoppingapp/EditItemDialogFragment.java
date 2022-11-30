@@ -4,9 +4,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -21,12 +24,16 @@ public class EditItemDialogFragment extends DialogFragment {
     // indicate the type of an edit
     public static final int SAVE = 1;   // update an existing item
     public static final int DELETE = 2; // delete an existing item
+    public static final int ADD = 3;    // add an existing item to cart
 
     private EditText itemView;
+    private Button btn;
 
     int position;     // the position of the edited item on the list of items
     String item;
     String key;
+
+    private boolean textChanged = false;
 
     FragmentManager frag;
 
@@ -62,17 +69,33 @@ public class EditItemDialogFragment extends DialogFragment {
 
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View layout = inflater.inflate( R.layout.add_item_dialog, getActivity().findViewById( R.id.root ) );
+        final View layout = inflater.inflate( R.layout.edit_item_dialog, getActivity().findViewById( R.id.root ) );
 
-        itemView = layout.findViewById( R.id.editText1 );
+        itemView = layout.findViewById(R.id.editText2);
+        btn = layout.findViewById(R.id.button4);
 
         // Pre-fill the edit texts with the current values for this item.
         // The user will be able to modify them.
+
         itemView.setText( item );
 
         AlertDialog.Builder builder = new AlertDialog.Builder( getActivity(), R.style.AlertDialogStyle );
         builder.setView(layout);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String item = itemView.getText().toString();
+                Item dbItem = new Item(item, 0.0);
+                dbItem.setKey( key );
 
+                // get the Activity's listener to add the new item
+                EditItemDialogListener listener = (EditItemDialogFragment.EditItemDialogListener) getParentFragment();
+                listener.updateItem( position, dbItem, ADD);
+
+                // close the dialog
+                dismiss();
+            }
+        });
         // Set the title of the AlertDialog
         builder.setTitle( "Edit Item" );
 
@@ -85,8 +108,7 @@ public class EditItemDialogFragment extends DialogFragment {
             }
         });
 
-        // The Save button handler
-        builder.setPositiveButton( "SAVE", new SaveButtonClickListener() );
+        builder.setPositiveButton("SAVE", new SaveButtonClickListener() );
 
         // The Delete button handler
         builder.setNeutralButton( "DELETE", new DeleteButtonClickListener() );
@@ -104,7 +126,7 @@ public class EditItemDialogFragment extends DialogFragment {
 
             // get the Activity's listener to add the new item
             EditItemDialogListener listener = (EditItemDialogFragment.EditItemDialogListener) getParentFragment();
-            listener.updateItem( position, dbItem, SAVE );
+            listener.updateItem(position, dbItem, SAVE);
 
             // close the dialog
             dismiss();
@@ -127,4 +149,21 @@ public class EditItemDialogFragment extends DialogFragment {
             dismiss();
         }
     }
+
+//    private class AddButtonClickListener implements DialogInterface.OnClickListener {
+//        @Override
+//        public void onClick(DialogInterface dialog, int which) {
+//            String item = itemView.getText().toString();
+//            Item dbItem = new Item(item, 0.0);
+//            dbItem.setKey( key );
+//
+//            // get the Activity's listener to add the new item
+//            EditItemDialogListener listener = (EditItemDialogFragment.EditItemDialogListener) getParentFragment();
+//            listener.updateItem( position, dbItem, ADD);
+//
+//            // close the dialog
+//            dismiss();
+//        }
+//    }
+
 }
