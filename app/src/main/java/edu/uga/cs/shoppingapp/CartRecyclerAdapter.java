@@ -42,7 +42,7 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
             super(itemView);
 
             cost = itemView.findViewById(R.id.itemName4);
-            buyer = itemView.findViewById(R.id.itemName3);
+//            buyer = itemView.findViewById(R.id.itemName3);
             creator = itemView.findViewById(R.id.itemName2);
             item = itemView.findViewById( R.id.itemName);
         }
@@ -65,12 +65,12 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
         String key = item.getKey();
 
         String creatorText = "Created by: " + item.getCreator();
-        String buyerText = "Purchased by: "+ item.getBuyer();
+//        String buyerText = "Purchased by: "+ item.getBuyer();
         String costText = "$ " + item.getCost();
 
         holder.item.setText( item.getName());
         holder.creator.setText(creatorText);
-        holder.buyer.setText(buyerText);
+//        holder.buyer.setText(buyerText);
         holder.cost.setText(costText);
 
         // We can attach an OnClickListener to the itemView of the holder;

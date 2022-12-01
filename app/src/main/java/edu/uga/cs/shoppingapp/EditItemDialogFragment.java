@@ -59,7 +59,7 @@ public class EditItemDialogFragment extends DialogFragment {
         args.putInt( "position", position );
         args.putString("item", item);
         args.putString("userEmail", userEmail);
-        args.putString("buyer", buyer);
+//        args.putString("buyer", buyer);
         dialog.setArguments(args);
 
         return dialog;
@@ -73,7 +73,7 @@ public class EditItemDialogFragment extends DialogFragment {
         position = getArguments().getInt( "position" );
         item = getArguments().getString( "item" );
         userEmail = getArguments().getString("userEmail");
-        buyer = getArguments().getString("buyer");
+//        buyer = getArguments().getString("buyer");
         frag = getParentFragmentManager();
 
 
@@ -96,7 +96,7 @@ public class EditItemDialogFragment extends DialogFragment {
                 String item = itemView.getText().toString();
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 buyer = user.getEmail();
-                Item dbItem = new Item(item, 0.0, userEmail, buyer);
+                Item dbItem = new Item(item, 0.0, userEmail, null);
                 dbItem.setKey( key );
 
                 // get the Activity's listener to add the new item

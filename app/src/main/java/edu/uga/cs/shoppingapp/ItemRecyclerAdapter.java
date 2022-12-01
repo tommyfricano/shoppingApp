@@ -75,7 +75,7 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
             @Override
             public void onClick(View v) {
                 EditItemDialogFragment editItemFragment =
-                        EditItemDialogFragment.newInstance( holder.getAdapterPosition(), key, item.getName(), item.getCreator(), item.getBuyer() );
+                        EditItemDialogFragment.newInstance( holder.getAdapterPosition(), key, item.getName(), item.getCreator(), null );
                 editItemFragment.show( child, null);
             }
         });

@@ -70,12 +70,6 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
 
         // Supply item values as an argument.
         Bundle args = new Bundle();
-//        args.putString( "key", key );
-//        args.putInt( "position", position );
-//        args.putString("item", item);
-//        args.putString("userEmail", userEmail);
-//        args.putString("buyer", buyer);
-//        dialog.setArguments(args);
 
         return dialog;
     }
@@ -84,13 +78,7 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState ) {
 
-//        key = getArguments().getString( "key" );
-//        position = getArguments().getInt( "position" );
-//        item = getArguments().getString( "item" );
-//        userEmail = getArguments().getString("userEmail");
-//        buyer = getArguments().getString("buyer");
         frag = getParentFragmentManager();
-
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View layout = inflater.inflate( R.layout.cart_dialog, getActivity().findViewById( R.id.root ) );
@@ -168,11 +156,7 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
     private class PurchaseButtonClickListener implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-
-//             add all items
-            String item = itemView.getText().toString();
-            Item dbItem = new Item(item, 0.0, userEmail, null);
-            dbItem.setKey( key );
+//             add all items to purchase list
 
 
             // close the dialog
@@ -241,7 +225,7 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
                             recyclerView.post( new Runnable() {
                                 @Override
                                 public void run() {
-                                    recyclerView.smoothScrollToPosition( itemsList.size()-1 );
+                                    recyclerView.smoothScrollToPosition( itemsList.size() );
                                 }
                             } );
 
@@ -299,93 +283,4 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
             });
         }
     }
-
-    private class DeleteButtonClickListener implements DialogInterface.OnClickListener {
-        @Override
-        public void onClick( DialogInterface dialog, int which ) {
-
-            Item delItem = new Item(item, 0.0, userEmail, null);
-            delItem.setKey( key );
-
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("items");
-
-            // First, a call to push() appends a new node to the existing list (one is created
-            // if this is done for the first time).  Then, we set the value in the newly created
-            // list node to store the new item.
-            // This listener will be invoked asynchronously, as no need for an AsyncTask, as in
-            myRef.push().setValue( delItem )
-                    .addOnSuccessListener( new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-
-                            // Reposition the RecyclerView to show the JobLead most recently added (as the last item on the list).
-                            // Use of the post method is needed to wait until the RecyclerView is rendered, and only then
-                            // reposition the item into view (show the last item on the list).
-                            // the post method adds the argument (Runnable) to the message queue to be executed
-                            // by Android on the main UI thread.  It will be done *after* the setAdapter call
-                            // updates the list items, so the repositioning to the last item will take place
-                            // on the complete list of items.
-                            recyclerView.post( new Runnable() {
-                                @Override
-                                public void run() {
-                                    recyclerView.smoothScrollToPosition( itemsList.size()-1 );
-                                }
-                            } );
-
-                            Log.d( DEBUG_TAG, "item saved: " + item );
-                            // Show a quick confirmation
-//                            Toast.makeText( getActivity() , "Item" + delItem.getName(),
-//                                    Toast.LENGTH_SHORT).show();
-
-                        }
-                    })
-                    .addOnFailureListener( new OnFailureListener() {
-                        @Override
-                        public void onFailure( @NonNull Exception e ) {
-//                            Toast.makeText( getActivity(), "Failed to create a item for " + delItem.getName(),
-//                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-
-            Log.d( DEBUG_TAG, "Deleting item at: " + position + "(" + delItem.getName() + ")" );
-
-            // remove the deleted item from the list (internal list in the App)
-            itemsList.remove( position );
-
-            // Update the recycler view to remove the deleted item from that view
-            recyclerAdapter.notifyItemRemoved( position );
-
-            // Delete this item in Firebase.
-            // Note that we are using a specific key (one child in the list)
-            DatabaseReference ref = database
-                    .getReference()
-                    .child( "cart" )
-                    .child( delItem.getKey() );
-
-            // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
-            // to maintain items.
-            ref.addListenerForSingleValueEvent( new ValueEventListener() {
-                @Override
-                public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
-                    dataSnapshot.getRef().removeValue().addOnSuccessListener( new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d( DEBUG_TAG, "deleted item at: " + position + "(" + delItem.getName() + ")" );
-                            Toast.makeText(getActivity(), "item removed from cart: " + delItem.getName(),
-                                    Toast.LENGTH_SHORT).show();                        }
-                    });
-                }
-
-                @Override
-                public void onCancelled( @NonNull DatabaseError databaseError ) {
-                    Log.d( DEBUG_TAG, "failed to remove item from cart: " + position + "(" + delItem.getName() + ")" );
-                    Toast.makeText(getActivity(), "Failed to remove item from cart: " + delItem.getName(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
 }
