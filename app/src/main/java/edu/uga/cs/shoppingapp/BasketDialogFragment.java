@@ -58,6 +58,8 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
     String userEmail;
     String buyer;
 
+    String userId;
+
     FragmentManager frag;
 
     // A callback listener interface to finish up the editing of a item
@@ -96,9 +98,13 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
         recyclerAdapter = new CartRecyclerAdapter( itemsList, getActivity(), getChildFragmentManager());
         recyclerView.setAdapter( recyclerAdapter );
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Log.d(DEBUG_TAG, "onAuth: " + user.getUid());
+        userId = user.getUid();
+
         // get a Firebase DB instance reference
         database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("cart");
+        DatabaseReference myRef = database.getReference("cart/" + userId);
 
         // Set up a listener (event handler) to receive a value for the database reference.
         // This type of listener is called by Firebase once by immediately executing its onDataChange method
@@ -148,7 +154,6 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
 
         builder.setPositiveButton("PURCHASE", new BasketDialogFragment.PurchaseButtonClickListener());
 
-
         // Create the AlertDialog and show it
         return builder.create();
     }
@@ -157,8 +162,46 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
         @Override
         public void onClick(DialogInterface dialog, int which) {
 //             add all items to purchase list
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("purchased");
 
+            // First, a call to push() appends a new node to the existing list (one is created
+            // if this is done for the first time).  Then, we set the value in the newly created
+            // list node to store the new item.
+            // This listener will be invoked asynchronously, as no need for an AsyncTask, as in
+            myRef.push().setValue( item )
+                    .addOnSuccessListener( new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
 
+                            // Reposition the RecyclerView to show the JobLead most recently added (as the last item on the list).
+                            // Use of the post method is needed to wait until the RecyclerView is rendered, and only then
+                            // reposition the item into view (show the last item on the list).
+                            // the post method adds the argument (Runnable) to the message queue to be executed
+                            // by Android on the main UI thread.  It will be done *after* the setAdapter call
+                            // updates the list items, so the repositioning to the last item will take place
+                            // on the complete list of items.
+                            recyclerView.post( new Runnable() {
+                                @Override
+                                public void run() {
+                                    recyclerView.smoothScrollToPosition( itemsList.size() );
+                                }
+                            } );
+
+                            Log.d( DEBUG_TAG, "item saved: " + item );
+                            // Show a quick confirmation
+                            Toast.makeText( getActivity() , "Items purchased" ,
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
+                    })
+                    .addOnFailureListener( new OnFailureListener() {
+                        @Override
+                        public void onFailure( @NonNull Exception e ) {
+                            Toast.makeText( getActivity(), "Failed to purchase items " ,
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
             // close the dialog
             dismiss();
         }
@@ -175,7 +218,7 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
             // Note that we are using a specific key (one child in the list)
             DatabaseReference ref = database
                     .getReference()
-                    .child( "cart" )
+                    .child( "cart/" + userId)
                     .child( item.getKey() );
 
             // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
@@ -257,7 +300,7 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
             // Note that we are using a specific key (one child in the list)
             DatabaseReference ref = database
                     .getReference()
-                    .child( "cart" )
+                    .child( "cart/"+userId )
                     .child( item.getKey() );
 
             // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
