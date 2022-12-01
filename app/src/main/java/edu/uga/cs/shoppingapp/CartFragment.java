@@ -49,6 +49,7 @@ public class CartFragment extends Fragment implements AddItemDialogFragment.AddI
 
     private View cartView;
     private String userEmail;
+    private String userId;
 
     public CartFragment() {
         // Required empty public constructor
@@ -101,6 +102,7 @@ public class CartFragment extends Fragment implements AddItemDialogFragment.AddI
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Log.d(DEBUG_TAG, "onAuth: " + user.getEmail());
         userEmail = user.getEmail();
+        userId = user.getUid();
 
         // initialize the items list
         itemsList = new ArrayList<Item>();
@@ -269,7 +271,7 @@ public class CartFragment extends Fragment implements AddItemDialogFragment.AddI
             // add the new item
             // Add a new element (JobLead) to the list of items in Firebase.
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("cart");
+            DatabaseReference myRef = database.getReference("cart/"+userId);
 
             // First, a call to push() appends a new node to the existing list (one is created
             // if this is done for the first time).  Then, we set the value in the newly created

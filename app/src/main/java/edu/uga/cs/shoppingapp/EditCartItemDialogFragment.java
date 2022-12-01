@@ -86,7 +86,7 @@ public class EditCartItemDialogFragment extends DialogFragment {
         // The user will be able to modify them.
 
         itemView.setText( item );
-        costView.setHint( cost.toString() );
+        costView.setText( cost.toString() );
 
         AlertDialog.Builder builder = new AlertDialog.Builder( getActivity(), R.style.AlertDialogStyle );
         builder.setView(layout);
