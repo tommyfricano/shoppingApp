@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,11 @@ import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,7 +38,10 @@ public class CostFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-
+    private RecyclerView recyclerView;
+    private CartRecyclerAdapter recyclerAdapter;
+    private List<String> userList;
+    private FirebaseDatabase database;
 
     public CostFragment() {
         // Required empty public constructor
@@ -75,14 +85,38 @@ public class CostFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
         super.onViewCreated(view, savedInstanceState);
-        Button button = getView().findViewById(R.id.button2);
-        button.setOnClickListener( new View.OnClickListener() {
+
+//        recyclerView = getView().findViewById( R.id.recyclerView1);
+//
+//        // initialize the items list
+//        userList = new ArrayList<String>();
+//
+//        // use a linear layout manager for the recycler view
+//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+//        recyclerView.setLayoutManager(layoutManager);
+//
+//        // the recycler adapter with items is empty at first; it will be updated later
+//        recyclerAdapter = new CartRecyclerAdapter( userList, getActivity(), getChildFragmentManager());
+//        recyclerView.setAdapter( recyclerAdapter );
+//
+//        // get a Firebase DB instance reference
+       database = FirebaseDatabase.getInstance();
+       DatabaseReference myRef = database.getReference("cart");
+       Button button = getView().findViewById(R.id.button2);
+       button.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
                 Intent i = new Intent(getActivity(), MainActivity.class);
                 startActivity(i);
             }
-        });
+       });
+       Button costBtn = getView().findViewById(R.id.button5);
+       costBtn.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+       });
     }
 }

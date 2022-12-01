@@ -65,7 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 Log.d( DEBUG_TAG, "createUserWithEmail: success" );
 
                                 FirebaseUser user = firebaseAuth.getCurrentUser();
-
+                                User user1 = new User(firebaseAuth.getCurrentUser().getEmail(),0.0,null);
                                 Intent intent = new Intent( RegisterActivity.this, ShoppingAppManagementActivity.class );
                                 startActivity( intent );
 
