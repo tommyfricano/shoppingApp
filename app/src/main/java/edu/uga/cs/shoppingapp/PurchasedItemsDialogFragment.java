@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,7 +35,7 @@ import java.util.List;
 
 // This is a DialogFragment to handle edits to a item.
 // The edits are: updates and deletions of existing items.
-public class PurchasedItemsDialogFragment extends DialogFragment implements EditCartItemDialogFragment.EditCartItemDialogListener{
+public class PurchasedItemsDialogFragment extends DialogFragment implements EditPurchasedItemDialogFragment.EditPurchasedItemDialogListener{
 
     // indicate the type of an edit
     public static final int SAVE = 1;   // update an existing item
@@ -47,7 +48,9 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
 
 
     private RecyclerView recyclerView;
-    private CartRecyclerAdapter recyclerAdapter;
+    private PurchasedItemsRecyclerAdapter recyclerAdapter;
+    private TextView buyer;
+    private EditText costText;
 
     private ArrayList<Item> itemsList;
 
@@ -57,25 +60,32 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
     String item;
     String key;
     String userEmail;
-    String buyer;
-    int i =0;
+    Double cost;
+    String userCheck;
 
     String userId;
 
     FragmentManager frag;
+
+    public interface PurchasedItemsDialogListener {
+        void updateItem(int position, User user, int action);
+    }
 
     // A callback listener interface to finish up the editing of a item
     // ReviewItemActivity implements this listener interface, as it will
     // need to update the list of JobLeads and also update the RecyclerAdapter to reflect the
     // changes.
 
-    public static PurchasedItemsDialogFragment newInstance(int position, ArrayList<Item> itemsList) {
+    public static PurchasedItemsDialogFragment newInstance(int position, String key, String email, double cost) {
         PurchasedItemsDialogFragment dialog = new PurchasedItemsDialogFragment();
 
         // Supply item values as an argument.
         Bundle args = new Bundle();
         args.putInt( "position", position );
-//        args.putParcelableArrayList("itemList", (ArrayList<? extends Parcelable>) itemsList);
+        args.putString("key", key);
+        args.putString("email", email);
+        args.putDouble("cost", cost);
+        dialog.setArguments(args);
         return dialog;
     }
 
@@ -83,13 +93,20 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState ) {
 
-//        ArrayList<Parcelable> itemsListref = getArguments().getParcelableArrayList("itemList");
         frag = getParentFragmentManager();
+        key = getArguments().getString("key");
+        userEmail = getArguments().getString("email");
+        cost = getArguments().getDouble("cost");
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View layout = inflater.inflate( R.layout.cart_dialog, getActivity().findViewById( R.id.root ) );
+        final View layout = inflater.inflate( R.layout.purchased_dialog, getActivity().findViewById( R.id.root ) );
 
         recyclerView = layout.findViewById( R.id.recyclerView1);
+        buyer = layout.findViewById(R.id.textView5);
+        costText = layout.findViewById(R.id.editText6);
+
+        buyer.setText(userEmail);
+        costText.setText(cost.toString());
 
         // initialize the items list
         itemsList = new ArrayList<Item>();
@@ -99,17 +116,18 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
         recyclerView.setLayoutManager(layoutManager);
 
         // the recycler adapter with items is empty at first; it will be updated later
-        recyclerAdapter = new CartRecyclerAdapter( itemsList, getActivity(), getChildFragmentManager());
+        recyclerAdapter = new PurchasedItemsRecyclerAdapter( itemsList, getActivity(), getChildFragmentManager());
         recyclerView.setAdapter( recyclerAdapter );
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Log.d(DEBUG_TAG, "onAuth: " + user.getUid());
         userId = user.getUid();
-        userEmail = user.getEmail();
+        userCheck = user.getEmail();
 
         // get a Firebase DB instance reference
         database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("purchased");
+        DatabaseReference myRef = database.getReference("purchased/"+key+"/items");
+
         Log.d(DEBUG_TAG, "onAuth: " );
 
         // Set up a listener (event handler) to receive a value for the database reference.
@@ -123,6 +141,7 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
                 itemsList.clear(); // clear the current content; this is inefficient!
                 for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
                     Log.d( DEBUG_TAG, "ValueEventListener: " + postSnapshot.getValue( Item.class ) );
+
                     Item item = postSnapshot.getValue( Item.class );
                     item.setKey( postSnapshot.getKey() );
                     itemsList.add( item );
@@ -147,7 +166,7 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
         AlertDialog.Builder builder = new AlertDialog.Builder( getActivity(), R.style.AlertDialogStyle );
         builder.setView(layout);
         // Set the title of the AlertDialog
-        builder.setTitle( "Cart" );
+        builder.setTitle( "Purchased items" );
 
         // The Cancel button handler
         builder.setNegativeButton( android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -160,8 +179,6 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
 
         builder.setPositiveButton("SAVE", new PurchasedItemsDialogFragment.SaveButtonClickListener());
 
-        i++;
-
         // Create the AlertDialog and show it
         return builder.create();
     }
@@ -169,20 +186,28 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
     private class SaveButtonClickListener implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            String item = itemView.getText().toString();
-            Item dbItem = new Item(item, 0.0, userEmail, null);
-            dbItem.setKey( key );
 
-            // get the Activity's listener to add the new item
-            EditItemDialogFragment.EditItemDialogListener listener = (EditItemDialogFragment.EditItemDialogListener) getParentFragment();
-            listener.updateItem(position, dbItem, SAVE);
+            if(userEmail.equals(userCheck)) {
+                String cost = costText.getText().toString();
+                Double spent = Double.parseDouble(cost);
+                User dbUser = new User(userEmail, spent, itemsList);
+                dbUser.setKey(key);
 
-            // close the dialog
-            dismiss();
+                // get the Activity's listener to add the new item
+                PurchasedItemsDialogFragment.PurchasedItemsDialogListener listener = (PurchasedItemsDialogFragment.PurchasedItemsDialogListener) getParentFragment();
+                listener.updateItem(position, dbUser, SAVE);
+
+                // close the dialog
+                dismiss();
+            }
+            else {
+                Toast.makeText(getActivity(), "Cannot edit other users purchases",
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
-    public void updateCartItem( int position, Item item, int action ) {
+    public void updateItem( int position, Item item, int action ) {
         if( action == EditCartItemDialogFragment.SAVE ) {
             Log.d( DEBUG_TAG, "Updating item at: " + position + "(" + item.getName() + ")" );
 
@@ -193,7 +218,7 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
             // Note that we are using a specific key (one child in the list)
             DatabaseReference ref = database
                     .getReference()
-                    .child( "cart/" + userId)
+                    .child( "purchased/" + key +"/items")
                     .child( item.getKey() );
 
             // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
@@ -221,48 +246,6 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
         }
         else if( action == EditCartItemDialogFragment.DELETE ) {
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("items");
-
-            // First, a call to push() appends a new node to the existing list (one is created
-            // if this is done for the first time).  Then, we set the value in the newly created
-            // list node to store the new item.
-            // This listener will be invoked asynchronously, as no need for an AsyncTask, as in
-            myRef.push().setValue( item )
-                    .addOnSuccessListener( new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-
-                            // Reposition the RecyclerView to show the JobLead most recently added (as the last item on the list).
-                            // Use of the post method is needed to wait until the RecyclerView is rendered, and only then
-                            // reposition the item into view (show the last item on the list).
-                            // the post method adds the argument (Runnable) to the message queue to be executed
-                            // by Android on the main UI thread.  It will be done *after* the setAdapter call
-                            // updates the list items, so the repositioning to the last item will take place
-                            // on the complete list of items.
-                            recyclerView.post( new Runnable() {
-                                @Override
-                                public void run() {
-                                    recyclerView.smoothScrollToPosition( itemsList.size() );
-                                }
-                            } );
-
-                            Log.d( DEBUG_TAG, "item saved: " + item );
-                            // Show a quick confirmation
-//                            Toast.makeText( getActivity() , "Item" + delItem.getName(),
-//                                    Toast.LENGTH_SHORT).show();
-
-                        }
-                    })
-                    .addOnFailureListener( new OnFailureListener() {
-                        @Override
-                        public void onFailure( @NonNull Exception e ) {
-//                            Toast.makeText( getActivity(), "Failed to create a item for " + delItem.getName(),
-//                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-
             Log.d( DEBUG_TAG, "Deleting item at: " + position + "(" + item.getName() + ")" );
 
             // remove the deleted item from the list (internal list in the App)
@@ -275,7 +258,7 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
             // Note that we are using a specific key (one child in the list)
             DatabaseReference ref = database
                     .getReference()
-                    .child( "cart/"+userId )
+                    .child( "purchased/"+key+"/items" )
                     .child( item.getKey() );
 
             // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps

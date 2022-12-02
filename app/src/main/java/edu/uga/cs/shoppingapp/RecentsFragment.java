@@ -29,7 +29,7 @@ import java.util.List;
  * Use the {@link RecentsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RecentsFragment extends Fragment {
+public class RecentsFragment extends Fragment implements PurchasedItemsDialogFragment.PurchasedItemsDialogListener{
 
     public static final String DEBUG_TAG = "RecentsFragment";
 
@@ -69,9 +69,6 @@ public class RecentsFragment extends Fragment {
         super.onViewCreated( view, savedInstanceState );
 
         recyclerView = getView().findViewById( R.id.recyclerView1);
-
-        // initialize the items list
-//        itemsList = new ArrayList<Item>();
 
         userList = new ArrayList<User>();
         // use a linear layout manager for the recycler view
@@ -113,5 +110,83 @@ public class RecentsFragment extends Fragment {
                 System.out.println( "ValueEventListener: reading failed: " + databaseError.getMessage() );
             }
         } );
+    }
+
+    public void updateItem( int position, User user, int action ) {
+        if( action == EditCartItemDialogFragment.SAVE ) {
+            Log.d( DEBUG_TAG, "Updating item at: " + position + "(" + user.getEmail() + ")" );
+
+            // Update the recycler view to show the changes in the updated item in that view
+            recyclerAdapter.notifyItemChanged( position );
+
+            // Update this job lead in Firebase
+            // Note that we are using a specific key (one child in the list)
+            DatabaseReference ref = database
+                    .getReference()
+                    .child( "purchased/")
+                    .child( user.getKey() );
+
+            // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
+            // to maintain items.
+            ref.addListenerForSingleValueEvent( new ValueEventListener() {
+                @Override
+                public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
+                    dataSnapshot.getRef().setValue( user ).addOnSuccessListener( new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d( DEBUG_TAG, "updated item at: " + position + "(" + user.getEmail() + ")" );
+                            Toast.makeText(getActivity(), "item updated for " + user.getEmail(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled( @NonNull DatabaseError databaseError ) {
+                    Log.d( DEBUG_TAG, "failed to update item at: " + position + "(" + user.getEmail() + ")" );
+                    Toast.makeText(getActivity(), "Failed to update " + user.getEmail(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else if( action == EditCartItemDialogFragment.DELETE ) {
+
+            Log.d( DEBUG_TAG, "Deleting item at: " + position + "(" + user.getEmail() + ")" );
+
+            // remove the deleted item from the list (internal list in the App)
+            itemsList.remove( position );
+
+            // Update the recycler view to remove the deleted item from that view
+            recyclerAdapter.notifyItemRemoved( position );
+
+            // Delete this item in Firebase.
+            // Note that we are using a specific key (one child in the list)
+            DatabaseReference ref = database
+                    .getReference()
+                    .child( "purchased/")
+                    .child( user.getKey() );
+
+            // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
+            // to maintain items.
+            ref.addListenerForSingleValueEvent( new ValueEventListener() {
+                @Override
+                public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
+                    dataSnapshot.getRef().removeValue().addOnSuccessListener( new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d( DEBUG_TAG, "deleted item at: " + position + "(" + user.getEmail() + ")" );
+                            Toast.makeText(getActivity(), "item removed from cart: " + user.getEmail(),
+                                    Toast.LENGTH_SHORT).show();                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled( @NonNull DatabaseError databaseError ) {
+                    Log.d( DEBUG_TAG, "failed to remove item from cart: " + position + "(" + user.getEmail() + ")" );
+                    Toast.makeText(getActivity(), "Failed to remove item from cart: " + user.getEmail(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }

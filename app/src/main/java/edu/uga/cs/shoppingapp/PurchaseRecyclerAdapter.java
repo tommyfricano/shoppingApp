@@ -48,7 +48,7 @@ public class PurchaseRecyclerAdapter extends RecyclerView.Adapter<PurchaseRecycl
     @NonNull
     @Override
     public ItemHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.cart_item, parent, false );
+        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.user_purchases_item, parent, false );
         return new ItemHolder( view );
     }
 
@@ -61,9 +61,10 @@ public class PurchaseRecyclerAdapter extends RecyclerView.Adapter<PurchaseRecycl
 
         String key = user.getKey();
 
+        String userText = "Purchased by: "+ user.getEmail();
         String costText = "$ " + user.getSpent();
 
-        holder.user.setText( user.getEmail());
+        holder.user.setText( userText);
         holder.cost.setText(costText);
 
         // We can attach an OnClickListener to the itemView of the holder;
@@ -74,7 +75,7 @@ public class PurchaseRecyclerAdapter extends RecyclerView.Adapter<PurchaseRecycl
             public void onClick(View v) {
 //                add fragment to items in user list?
                 PurchasedItemsDialogFragment purchasedItemsDialogFragment =
-                        PurchasedItemsDialogFragment.newInstance( holder.getAdapterPosition(), user.getItems() );
+                        PurchasedItemsDialogFragment.newInstance( holder.getAdapterPosition(), user.getKey(), user.getEmail(), user.getSpent() );
                 purchasedItemsDialogFragment.show(child, null);
             }
         });

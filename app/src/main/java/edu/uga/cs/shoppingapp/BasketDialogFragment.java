@@ -54,7 +54,7 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
 
     int position;     // the position of the edited item on the list of items
     String item;
-    String key;
+//    String key;
     String userEmail;
     String buyer;
 
@@ -166,7 +166,9 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("purchased");
             Log.d( DEBUG_TAG, "ValueEventListener: " + itemsList.get(0).getName());
-
+            for(int i=0; i< itemsList.size();i++){
+                itemsList.get(i).setBuyer(userEmail);
+            }
 
             User user = new User(userEmail,0.0, itemsList);
 
@@ -209,8 +211,20 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
 //                                        Toast.LENGTH_SHORT).show();
                             }
                         });
-//            }
-            // close the dialog
+
+            // remove the deleted item from the list (internal list in the App)
+            itemsList.remove( position );
+
+            // Update the recycler view to remove the deleted item from that view
+            recyclerAdapter.notifyItemRemoved( position );
+
+            // Delete this item in Firebase.
+            // Note that we are using a specific key (one child in the list)
+            DatabaseReference ref = database
+                    .getReference()
+                    .child( "cart/" + userId );
+            ref.removeValue();
+
             dismiss();
         }
     }
