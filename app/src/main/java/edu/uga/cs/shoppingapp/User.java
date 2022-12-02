@@ -1,21 +1,55 @@
 package edu.uga.cs.shoppingapp;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
 
     private String email;
     private double spent;
-    private List<Item> items;
+    private ArrayList<Item> items;
+    private String key;
 
-    public User(String email, double spent, List<Item> items) {
+    public User(String email, double spent, ArrayList<Item> items) {
         this.email = email;
         this.spent = spent;
-        this.items = items;
+        this.items = new ArrayList<>(items);
+        this.key = null;
+    }
+
+    public User() {
+        this.email = null;
+        this.spent = 0;
+        this.items = null;
+        this.key = null;
     }
 
     public String getEmail() {
         return this.email;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public double getSpent() {
+        return spent;
+    }
+
+    public void setSpent(double spent) {
+        this.spent = spent;
+    }
+
+    public ArrayList<Item> getItems() {
+        return items;
+    }
+
+    public void setItems(ArrayList<Item> items) {
+        this.items = items;
+    }
 }
