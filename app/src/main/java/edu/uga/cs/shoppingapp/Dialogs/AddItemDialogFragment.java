@@ -1,10 +1,9 @@
-package edu.uga.cs.shoppingapp;
+package edu.uga.cs.shoppingapp.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -15,6 +14,9 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import edu.uga.cs.shoppingapp.Item.Item;
+import edu.uga.cs.shoppingapp.R;
 
 // A DialogFragment class to handle job lead additions from the job lead review activity
 // It uses a DialogFragment to allow the input of a new job lead.

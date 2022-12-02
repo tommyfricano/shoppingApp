@@ -1,4 +1,4 @@
-package edu.uga.cs.shoppingapp;
+package edu.uga.cs.shoppingapp.Adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,26 +8,29 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import edu.uga.cs.shoppingapp.Dialogs.EditItemDialogFragment;
+import edu.uga.cs.shoppingapp.Item.Item;
+import edu.uga.cs.shoppingapp.R;
 
 /**
  * This is an adapter class for the RecyclerView to show all items.
  */
-public class PurchaseRecyclerAdapter extends RecyclerView.Adapter<PurchaseRecyclerAdapter.ItemHolder> {
+public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ItemHolder> {
 
-    public static final String DEBUG_TAG = "CartRecyclerAdapter";
+    public static final String DEBUG_TAG = "RecyclerAdapter";
 
-    private List<User> userList;
+    private List<Item> itemList;
     private Context context;
     private FragmentManager child;
+    private String userEmail;
 
-    public PurchaseRecyclerAdapter(List<User> userList, Context context, FragmentManager child) {
-        this.userList = userList;
+    public ItemRecyclerAdapter(List<Item> itemList, Context context, FragmentManager child) {
+        this.itemList = itemList;
         this.context = context;
         this.child = child;
     }
@@ -35,38 +38,35 @@ public class PurchaseRecyclerAdapter extends RecyclerView.Adapter<PurchaseRecycl
     // The adapter must have a ViewHolder class to "hold" one item to show.
     class ItemHolder extends RecyclerView.ViewHolder {
 
-        TextView user;
-        TextView cost;
+        TextView item;
+        TextView creator;
 
         public ItemHolder(View itemView ) {
             super(itemView);
-
-            cost = itemView.findViewById(R.id.itemName4);
-            user = itemView.findViewById( R.id.itemName);
+            creator = itemView.findViewById( R.id.itemName2 );
+            item = itemView.findViewById( R.id.itemName );
         }
     }
 
     @NonNull
     @Override
     public ItemHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.user_purchases_item, parent, false );
+        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.item, parent, false );
         return new ItemHolder( view );
     }
 
     // This method fills in the values of the Views to show an item
     @Override
     public void onBindViewHolder( ItemHolder holder, int position ) {
-        User user = userList.get( position );
+        Item item = itemList.get( position );
 
-        Log.d( DEBUG_TAG, "onBindViewHolder: " + user );
+        Log.d( DEBUG_TAG, "onBindViewHolder: " + item );
 
-        String key = user.getKey();
+        String key = item.getKey();
+        String creatorText = "Creator: " + item.getCreator();
 
-        String userText = "Purchased by: "+ user.getEmail();
-        String costText = "$ " + user.getSpent();
-
-        holder.user.setText( userText);
-        holder.cost.setText(costText);
+        holder.item.setText( item.getName());
+        holder.creator.setText(creatorText);
 
         // We can attach an OnClickListener to the itemView of the holder;
         // itemView is a public field in the Holder class.
@@ -74,16 +74,15 @@ public class PurchaseRecyclerAdapter extends RecyclerView.Adapter<PurchaseRecycl
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                add fragment to items in user list?
-                PurchasedItemsDialogFragment purchasedItemsDialogFragment =
-                        PurchasedItemsDialogFragment.newInstance( holder.getAdapterPosition(), user.getKey(), user.getEmail(), user.getSpent() );
-                purchasedItemsDialogFragment.show(child, null);
+                EditItemDialogFragment editItemFragment =
+                        EditItemDialogFragment.newInstance( holder.getAdapterPosition(), key, item.getName(), item.getCreator(), null );
+                editItemFragment.show( child, null);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return userList.size();
+        return itemList.size();
     }
 }

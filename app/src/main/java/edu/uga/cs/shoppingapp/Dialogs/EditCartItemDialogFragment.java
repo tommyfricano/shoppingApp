@@ -1,4 +1,4 @@
-package edu.uga.cs.shoppingapp;
+package edu.uga.cs.shoppingapp.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -15,12 +14,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import edu.uga.cs.shoppingapp.Item.Item;
+import edu.uga.cs.shoppingapp.R;
 
 // This is a DialogFragment to handle edits to a item.
 // The edits are: updates and deletions of existing items.
-public class EditItemDialogFragment extends DialogFragment {
+public class EditCartItemDialogFragment extends DialogFragment {
 
     // indicate the type of an edit
     public static final int SAVE = 1;   // update an existing item
@@ -28,15 +27,14 @@ public class EditItemDialogFragment extends DialogFragment {
     public static final int ADD = 3;    // add an existing item to cart
 
     private EditText itemView;
-    private Button btn;
+    private EditText costView;
 
     int position;     // the position of the edited item on the list of items
     String item;
+    Double cost;
     String key;
     String userEmail;
     String buyer;
-
-    private boolean textChanged = false;
 
     FragmentManager frag;
 
@@ -44,20 +42,21 @@ public class EditItemDialogFragment extends DialogFragment {
     // ReviewItemActivity implements this listener interface, as it will
     // need to update the list of JobLeads and also update the RecyclerAdapter to reflect the
     // changes.
-    public interface EditItemDialogListener {
-        void updateItem(int position, Item item, int action);
+    public interface EditCartItemDialogListener {
+        void updateCartItem(int position, Item item, int action);
     }
 
-    public static EditItemDialogFragment newInstance(int position, String key, String item, String userEmail, String buyer) {
-        EditItemDialogFragment dialog = new EditItemDialogFragment();
+    public static EditCartItemDialogFragment newInstance(int position, String key, String item, String userEmail, String buyer, double cost) {
+        EditCartItemDialogFragment dialog = new EditCartItemDialogFragment();
 
         // Supply item values as an argument.
         Bundle args = new Bundle();
         args.putString( "key", key );
         args.putInt( "position", position );
         args.putString("item", item);
+        args.putDouble("cost", cost);
         args.putString("userEmail", userEmail);
-//        args.putString("buyer", buyer);
+        args.putString("buyer", buyer);
         dialog.setArguments(args);
 
         return dialog;
@@ -70,41 +69,27 @@ public class EditItemDialogFragment extends DialogFragment {
         key = getArguments().getString( "key" );
         position = getArguments().getInt( "position" );
         item = getArguments().getString( "item" );
+        cost = getArguments().getDouble("cost");
         userEmail = getArguments().getString("userEmail");
-//        buyer = getArguments().getString("buyer");
+        buyer = getArguments().getString("buyer");
         frag = getParentFragmentManager();
 
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View layout = inflater.inflate( R.layout.edit_item_dialog, getActivity().findViewById( R.id.root ) );
+        final View layout = inflater.inflate( R.layout.edit_cart_item_dialog, getActivity().findViewById( R.id.root ) );
 
         itemView = layout.findViewById(R.id.ItemText);
-        btn = layout.findViewById(R.id.button4);
+        costView = layout.findViewById(R.id.CostText);
 
         // Pre-fill the edit texts with the current values for this item.
         // The user will be able to modify them.
 
         itemView.setText( item );
+        costView.setText( cost.toString() );
 
         AlertDialog.Builder builder = new AlertDialog.Builder( getActivity(), R.style.AlertDialogStyle );
         builder.setView(layout);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String item = itemView.getText().toString();
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                buyer = user.getEmail();
-                Item dbItem = new Item(item, 0.0, userEmail, null);
-                dbItem.setKey( key );
 
-                // get the Activity's listener to add the new item
-                EditItemDialogListener listener = (EditItemDialogFragment.EditItemDialogListener) getParentFragment();
-                listener.updateItem( position, dbItem, ADD);
-
-                // close the dialog
-                dismiss();
-            }
-        });
         // Set the title of the AlertDialog
         builder.setTitle( "Edit Item" );
 
@@ -130,12 +115,15 @@ public class EditItemDialogFragment extends DialogFragment {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             String item = itemView.getText().toString();
-            Item dbItem = new Item(item, 0.0, userEmail, null);
+            String cost = costView.getText().toString();
+            Double costValue = Double.parseDouble(cost);
+
+            Item dbItem = new Item(item, costValue, userEmail, buyer);
             dbItem.setKey( key );
 
             // get the Activity's listener to add the new item
-            EditItemDialogListener listener = (EditItemDialogFragment.EditItemDialogListener) getParentFragment();
-            listener.updateItem(position, dbItem, SAVE);
+            EditCartItemDialogListener listener = (EditCartItemDialogFragment.EditCartItemDialogListener) getParentFragment();
+            listener.updateCartItem(position, dbItem, SAVE);
 
             // close the dialog
             dismiss();
@@ -152,8 +140,8 @@ public class EditItemDialogFragment extends DialogFragment {
             Log.d("Edit Item", String.valueOf(frag));
 
             // get the Activity's listener to add the new item
-            EditItemDialogFragment.EditItemDialogListener listener = (EditItemDialogFragment.EditItemDialogListener) getParentFragment();            // add the new job lead
-            listener.updateItem( position, delItem, DELETE );
+            EditCartItemDialogFragment.EditCartItemDialogListener listener = (EditCartItemDialogFragment.EditCartItemDialogListener) getParentFragment();            // add the new job lead
+            listener.updateCartItem( position, delItem, DELETE );
             // close the dialog
             dismiss();
         }

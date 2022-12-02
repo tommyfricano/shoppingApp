@@ -1,4 +1,4 @@
-package edu.uga.cs.shoppingapp;
+package edu.uga.cs.shoppingapp.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -9,24 +9,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import edu.uga.cs.shoppingapp.Item.Item;
+import edu.uga.cs.shoppingapp.R;
+
 // This is a DialogFragment to handle edits to a item.
 // The edits are: updates and deletions of existing items.
-public class EditPurchasedItemDialogFragment extends DialogFragment {
+public class EditItemDialogFragment extends DialogFragment {
 
     // indicate the type of an edit
     public static final int SAVE = 1;   // update an existing item
     public static final int DELETE = 2; // delete an existing item
     public static final int ADD = 3;    // add an existing item to cart
 
-    private TextView itemView;
-    private TextView costView;
+    private EditText itemView;
     private Button btn;
 
     int position;     // the position of the edited item on the list of items
@@ -34,8 +38,6 @@ public class EditPurchasedItemDialogFragment extends DialogFragment {
     String key;
     String userEmail;
     String buyer;
-    Double cost;
-    String creator;
 
     private boolean textChanged = false;
 
@@ -45,12 +47,12 @@ public class EditPurchasedItemDialogFragment extends DialogFragment {
     // ReviewItemActivity implements this listener interface, as it will
     // need to update the list of JobLeads and also update the RecyclerAdapter to reflect the
     // changes.
-    public interface EditPurchasedItemDialogListener {
+    public interface EditItemDialogListener {
         void updateItem(int position, Item item, int action);
     }
 
-    public static EditPurchasedItemDialogFragment newInstance(int position, String key, String item, String creator,  String userEmail, Double cost) {
-        EditPurchasedItemDialogFragment dialog = new EditPurchasedItemDialogFragment();
+    public static EditItemDialogFragment newInstance(int position, String key, String item, String userEmail, String buyer) {
+        EditItemDialogFragment dialog = new EditItemDialogFragment();
 
         // Supply item values as an argument.
         Bundle args = new Bundle();
@@ -58,8 +60,7 @@ public class EditPurchasedItemDialogFragment extends DialogFragment {
         args.putInt( "position", position );
         args.putString("item", item);
         args.putString("userEmail", userEmail);
-        args.putDouble("cost", cost);
-        args.putString("creator", creator);
+//        args.putString("buyer", buyer);
         dialog.setArguments(args);
 
         return dialog;
@@ -73,36 +74,53 @@ public class EditPurchasedItemDialogFragment extends DialogFragment {
         position = getArguments().getInt( "position" );
         item = getArguments().getString( "item" );
         userEmail = getArguments().getString("userEmail");
-        cost = getArguments().getDouble("cost");
-        creator = getArguments().getString("creator");
+//        buyer = getArguments().getString("buyer");
         frag = getParentFragmentManager();
 
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View layout = inflater.inflate( R.layout.edit_purchase_item_dialog, getActivity().findViewById( R.id.root ) );
+        final View layout = inflater.inflate( R.layout.edit_item_dialog, getActivity().findViewById( R.id.root ) );
 
         itemView = layout.findViewById(R.id.ItemText);
-        costView = layout.findViewById(R.id.CostText);
+        btn = layout.findViewById(R.id.button4);
 
-        String costStr = "$ " + cost.toString();
+        // Pre-fill the edit texts with the current values for this item.
+        // The user will be able to modify them.
 
         itemView.setText( item );
-        costView.setText( costStr );
 
         AlertDialog.Builder builder = new AlertDialog.Builder( getActivity(), R.style.AlertDialogStyle );
         builder.setView(layout);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String item = itemView.getText().toString();
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                buyer = user.getEmail();
+                Item dbItem = new Item(item, 0.0, userEmail, null);
+                dbItem.setKey( key );
 
+                // get the Activity's listener to add the new item
+                EditItemDialogListener listener = (EditItemDialogFragment.EditItemDialogListener) getParentFragment();
+                listener.updateItem( position, dbItem, ADD);
+
+                // close the dialog
+                dismiss();
+            }
+        });
         // Set the title of the AlertDialog
-        builder.setTitle( "View Item" );
+        builder.setTitle( "Edit Item" );
 
         // The Cancel button handler
-        builder.setPositiveButton( "CLOSE", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton( android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
                 // close the dialog
                 dialog.dismiss();
             }
         });
+
+        builder.setPositiveButton("SAVE", new SaveButtonClickListener() );
 
         // The Delete button handler
         builder.setNeutralButton( "DELETE", new DeleteButtonClickListener() );
@@ -111,17 +129,33 @@ public class EditPurchasedItemDialogFragment extends DialogFragment {
         return builder.create();
     }
 
+    private class SaveButtonClickListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            String item = itemView.getText().toString();
+            Item dbItem = new Item(item, 0.0, userEmail, null);
+            dbItem.setKey( key );
+
+            // get the Activity's listener to add the new item
+            EditItemDialogListener listener = (EditItemDialogFragment.EditItemDialogListener) getParentFragment();
+            listener.updateItem(position, dbItem, SAVE);
+
+            // close the dialog
+            dismiss();
+        }
+    }
+
     private class DeleteButtonClickListener implements DialogInterface.OnClickListener {
         @Override
         public void onClick( DialogInterface dialog, int which ) {
 
-            Item delItem = new Item(item, cost, userEmail, null);
+            Item delItem = new Item(item, 0.0, userEmail, null);
             delItem.setKey( key );
 
             Log.d("Edit Item", String.valueOf(frag));
 
             // get the Activity's listener to add the new item
-            EditPurchasedItemDialogFragment.EditPurchasedItemDialogListener listener = (EditPurchasedItemDialogFragment.EditPurchasedItemDialogListener) getParentFragment();            // add the new job lead
+            EditItemDialogFragment.EditItemDialogListener listener = (EditItemDialogFragment.EditItemDialogListener) getParentFragment();            // add the new job lead
             listener.updateItem( position, delItem, DELETE );
             // close the dialog
             dismiss();

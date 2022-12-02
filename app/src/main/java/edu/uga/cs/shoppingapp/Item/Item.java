@@ -1,4 +1,4 @@
-package edu.uga.cs.shoppingapp;
+package edu.uga.cs.shoppingapp.Item;
 
 public class Item {
 

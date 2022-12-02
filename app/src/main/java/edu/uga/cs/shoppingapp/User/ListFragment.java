@@ -1,4 +1,4 @@
-package edu.uga.cs.shoppingapp;
+package edu.uga.cs.shoppingapp.User;
 
 import android.os.Bundle;
 
@@ -29,12 +29,19 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.uga.cs.shoppingapp.Adapters.ItemRecyclerAdapter;
+import edu.uga.cs.shoppingapp.Dialogs.AddItemDialogFragment;
+import edu.uga.cs.shoppingapp.Dialogs.BasketDialogFragment;
+import edu.uga.cs.shoppingapp.Dialogs.EditItemDialogFragment;
+import edu.uga.cs.shoppingapp.Item.Item;
+import edu.uga.cs.shoppingapp.R;
+
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CartFragment#newInstance} factory method to
+ * Use the {@link ListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CartFragment extends Fragment implements AddItemDialogFragment.AddItemDialogListener,
+public class ListFragment extends Fragment implements AddItemDialogFragment.AddItemDialogListener,
         EditItemDialogFragment.EditItemDialogListener{
 
     public static final String DEBUG_TAG = "CartActivity";
@@ -51,12 +58,12 @@ public class CartFragment extends Fragment implements AddItemDialogFragment.AddI
     private String userEmail;
     private String userId;
 
-    public CartFragment() {
+    public ListFragment() {
         // Required empty public constructor
     }
 
-    public static CartFragment newInstance(String param1, String param2) {
-        CartFragment fragment = new CartFragment();
+    public static ListFragment newInstance(String param1, String param2) {
+        ListFragment fragment = new ListFragment();
         return fragment;
     }
 

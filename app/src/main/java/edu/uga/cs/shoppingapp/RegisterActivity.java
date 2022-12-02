@@ -17,6 +17,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import edu.uga.cs.shoppingapp.User.User;
+
 
 public class RegisterActivity extends AppCompatActivity {
 

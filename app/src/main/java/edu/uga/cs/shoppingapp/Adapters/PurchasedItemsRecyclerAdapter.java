@@ -1,4 +1,4 @@
-package edu.uga.cs.shoppingapp;
+package edu.uga.cs.shoppingapp.Adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -6,17 +6,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.List;
+
+import edu.uga.cs.shoppingapp.Dialogs.EditPurchasedItemDialogFragment;
+import edu.uga.cs.shoppingapp.Item.Item;
+import edu.uga.cs.shoppingapp.R;
 
 /**
  * This is an adapter class for the RecyclerView to show all items.
  */
-public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapter.ItemHolder> {
+public class PurchasedItemsRecyclerAdapter extends RecyclerView.Adapter<PurchasedItemsRecyclerAdapter.ItemHolder> {
 
     public static final String DEBUG_TAG = "CartRecyclerAdapter";
 
@@ -24,7 +32,7 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
     private Context context;
     private FragmentManager child;
 
-    public CartRecyclerAdapter(List<Item> itemList, Context context, FragmentManager child ) {
+    public PurchasedItemsRecyclerAdapter(List<Item> itemList, Context context, FragmentManager child ) {
         this.itemList = itemList;
         this.context = context;
         this.child = child;
@@ -63,6 +71,8 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
         Log.d( DEBUG_TAG, "onBindViewHolder: " + item );
 
         String key = item.getKey();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userCheck = user.getEmail();
 
         String creatorText = "Created by: " + item.getCreator();
 //        String buyerText = "Purchased by: "+ item.getBuyer();
@@ -80,9 +90,16 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
             @Override
             public void onClick(View v) {
 //                add fragment to items in user list?
-                EditCartItemDialogFragment editCartItemFragment =
-                        EditCartItemDialogFragment.newInstance( holder.getAdapterPosition(), key, item.getName(), item.getCreator(), item.getBuyer(), item.getCost() );
-                editCartItemFragment.show( child, null);
+                if(userCheck.equals(item.getBuyer())){
+                    EditPurchasedItemDialogFragment editCartItemFragment =
+                            EditPurchasedItemDialogFragment.newInstance( holder.getAdapterPosition(), key, item.getName(), item.getCreator(), item.getBuyer(), item.getCost() );
+                    editCartItemFragment.show( child, null);
+                }
+                else{
+                    Toast.makeText(context.getApplicationContext(), "Cannot edit other users purchases",
+                            Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }

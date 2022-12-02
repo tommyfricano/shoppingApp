@@ -3,17 +3,18 @@ package edu.uga.cs.shoppingapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import edu.uga.cs.shoppingapp.NavBarFragments.PurchasesFragment;
+import edu.uga.cs.shoppingapp.User.CostFragment;
+import edu.uga.cs.shoppingapp.User.ListFragment;
 
 public class ShoppingAppManagementActivity extends AppCompatActivity implements BottomNavigationView.OnItemSelectedListener {
 
@@ -54,8 +55,8 @@ public class ShoppingAppManagementActivity extends AppCompatActivity implements 
         });
     }
 
-    CartFragment cartFragment = new CartFragment();
-    RecentsFragment recentsFragment = new RecentsFragment();
+    ListFragment listFragment = new ListFragment();
+    PurchasesFragment purchasesFragment = new PurchasesFragment();
     CostFragment costFragment = new CostFragment();
 
     @Override
@@ -63,11 +64,11 @@ public class ShoppingAppManagementActivity extends AppCompatActivity implements 
 
         switch (item.getItemId()) {
             case R.id.cart:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, cartFragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, listFragment).commit();
                 return true;
 
             case R.id.recents:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, recentsFragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, purchasesFragment).commit();
                 return true;
 
             case R.id.pay:

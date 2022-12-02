@@ -1,4 +1,4 @@
-package edu.uga.cs.shoppingapp;
+package edu.uga.cs.shoppingapp.NavBarFragments;
 
 import android.os.Bundle;
 
@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,12 +23,19 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.uga.cs.shoppingapp.Adapters.PurchaseRecyclerAdapter;
+import edu.uga.cs.shoppingapp.Dialogs.EditCartItemDialogFragment;
+import edu.uga.cs.shoppingapp.Dialogs.PurchasedItemsDialogFragment;
+import edu.uga.cs.shoppingapp.Item.Item;
+import edu.uga.cs.shoppingapp.R;
+import edu.uga.cs.shoppingapp.User.User;
+
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link RecentsFragment#newInstance} factory method to
+ * Use the {@link PurchasesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RecentsFragment extends Fragment implements PurchasedItemsDialogFragment.PurchasedItemsDialogListener{
+public class PurchasesFragment extends Fragment implements PurchasedItemsDialogFragment.PurchasedItemsDialogListener{
 
     public static final String DEBUG_TAG = "RecentsFragment";
 
@@ -43,12 +49,12 @@ public class RecentsFragment extends Fragment implements PurchasedItemsDialogFra
     private FirebaseDatabase database;
 
 
-    public RecentsFragment() {
+    public PurchasesFragment() {
         // Required empty public constructor
     }
 
-    public static RecentsFragment newInstance(String param1, String param2) {
-        RecentsFragment fragment = new RecentsFragment();
+    public static PurchasesFragment newInstance(String param1, String param2) {
+        PurchasesFragment fragment = new PurchasesFragment();
         return fragment;
     }
 

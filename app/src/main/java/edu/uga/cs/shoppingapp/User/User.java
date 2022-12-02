@@ -1,8 +1,8 @@
-package edu.uga.cs.shoppingapp;
+package edu.uga.cs.shoppingapp.User;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
+
+import edu.uga.cs.shoppingapp.Item.Item;
 
 public class User {
 
