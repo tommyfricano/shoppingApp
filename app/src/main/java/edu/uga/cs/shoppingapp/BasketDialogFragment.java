@@ -162,15 +162,17 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
     private class PurchaseButtonClickListener implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialog, int which) {
+            double spent = 0;
 //             add all items to purchase list
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("purchased");
             Log.d( DEBUG_TAG, "ValueEventListener: " + itemsList.get(0).getName());
             for(int i=0; i< itemsList.size();i++){
                 itemsList.get(i).setBuyer(userEmail);
+                spent += itemsList.get(i).getCost();
             }
 
-            User user = new User(userEmail,0.0, itemsList);
+            User user = new User(userEmail, spent, itemsList);
 
 //            for(int i=0;i<itemsList.size();i++) {
                 // First, a call to push() appends a new node to the existing list (one is created

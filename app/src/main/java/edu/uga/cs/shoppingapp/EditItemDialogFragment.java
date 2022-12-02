@@ -4,8 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,7 +78,7 @@ public class EditItemDialogFragment extends DialogFragment {
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View layout = inflater.inflate( R.layout.edit_item_dialog, getActivity().findViewById( R.id.root ) );
 
-        itemView = layout.findViewById(R.id.editText2);
+        itemView = layout.findViewById(R.id.ItemText);
         btn = layout.findViewById(R.id.button4);
 
         // Pre-fill the edit texts with the current values for this item.

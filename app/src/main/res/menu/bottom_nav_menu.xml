@@ -6,10 +6,10 @@
             android:icon="@drawable/ic_recent_foreground"/>
         <item
             android:id="@+id/recents"
-            android:title="Cart"
-            android:icon="@drawable/ic_cart_foreground"/>
+            android:title="Purchases"
+            android:icon="@drawable/ic_receipt_foreground"/>
         <item
             android:id="@+id/pay"
-            android:title="Pay"
+            android:title="Cost"
             android:icon="@drawable/ic_pay_foreground"/>
 </menu>

@@ -218,7 +218,7 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
             // Note that we are using a specific key (one child in the list)
             DatabaseReference ref = database
                     .getReference()
-                    .child( "purchased/" + key +"/items")
+                    .child( "purchased/" + key + "/items")
                     .child( item.getKey() );
 
             // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
@@ -282,6 +282,44 @@ public class PurchasedItemsDialogFragment extends DialogFragment implements Edit
                             Toast.LENGTH_SHORT).show();
                 }
             });
+
+            recyclerAdapter.notifyItemChanged( position );
+
+            String cost = costText.getText().toString();
+            Double spent = Double.parseDouble(cost) - item.getCost();
+            User dbUser = new User(userEmail, spent, itemsList);
+            dbUser.setKey(key);
+
+            // Update this job lead in Firebase
+            // Note that we are using a specific key (one child in the list)
+            DatabaseReference newRef = database
+                    .getReference()
+                    .child( "purchased/")
+                    .child( dbUser.getKey() );
+
+            // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
+            // to maintain items.
+            newRef.addListenerForSingleValueEvent( new ValueEventListener() {
+                @Override
+                public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
+                    dataSnapshot.getRef().setValue( dbUser ).addOnSuccessListener( new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+//                            Log.d( DEBUG_TAG, "updated item at: " + position + "(" + user.getEmail() + ")" );
+//                            Toast.makeText(getActivity(), "item updated for " + user.getEmail(),
+//                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled( @NonNull DatabaseError databaseError ) {
+//                    Log.d( DEBUG_TAG, "failed to update item at: " + position + "(" + user.getEmail() + ")" );
+//                    Toast.makeText(getActivity(), "Failed to update " + user.getEmail(),
+//                            Toast.LENGTH_SHORT).show();
+                }
+            });
+            costText.setText(spent.toString());
         }
     }
 }

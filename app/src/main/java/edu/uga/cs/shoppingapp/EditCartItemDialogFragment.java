@@ -7,16 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 // This is a DialogFragment to handle edits to a item.
 // The edits are: updates and deletions of existing items.
@@ -79,8 +75,8 @@ public class EditCartItemDialogFragment extends DialogFragment {
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View layout = inflater.inflate( R.layout.edit_cart_item_dialog, getActivity().findViewById( R.id.root ) );
 
-        itemView = layout.findViewById(R.id.editText2);
-        costView = layout.findViewById(R.id.editText3);
+        itemView = layout.findViewById(R.id.ItemText);
+        costView = layout.findViewById(R.id.CostText);
 
         // Pre-fill the edit texts with the current values for this item.
         // The user will be able to modify them.

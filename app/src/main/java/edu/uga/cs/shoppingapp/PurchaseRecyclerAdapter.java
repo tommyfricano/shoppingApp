@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public class PurchaseRecyclerAdapter extends RecyclerView.Adapter<PurchaseRecycl
     private Context context;
     private FragmentManager child;
 
-    public PurchaseRecyclerAdapter(List<User> userList, Context context, FragmentManager child ) {
+    public PurchaseRecyclerAdapter(List<User> userList, Context context, FragmentManager child) {
         this.userList = userList;
         this.context = context;
         this.child = child;

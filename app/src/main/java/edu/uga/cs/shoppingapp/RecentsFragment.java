@@ -76,7 +76,7 @@ public class RecentsFragment extends Fragment implements PurchasedItemsDialogFra
         recyclerView.setLayoutManager(layoutManager);
 
         // the recycler adapter with items is empty at first; it will be updated later
-        recyclerAdapter = new PurchaseRecyclerAdapter( userList, getActivity(), getChildFragmentManager() );
+        recyclerAdapter = new PurchaseRecyclerAdapter( userList, getActivity(), getChildFragmentManager());
         recyclerView.setAdapter( recyclerAdapter );
 
         // get a Firebase DB instance reference
