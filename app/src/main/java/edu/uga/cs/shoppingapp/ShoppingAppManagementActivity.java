@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseUser;
 import edu.uga.cs.shoppingapp.NavBarFragments.PurchasesFragment;
 import edu.uga.cs.shoppingapp.User.CostFragment;
 import edu.uga.cs.shoppingapp.User.ListFragment;
+import edu.uga.cs.shoppingapp.User.Purchase;
 
 public class ShoppingAppManagementActivity extends AppCompatActivity implements BottomNavigationView.OnItemSelectedListener {
 
@@ -22,6 +23,8 @@ public class ShoppingAppManagementActivity extends AppCompatActivity implements 
 
     private TextView signedInTextView;
     BottomNavigationView bottomNavigationView;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

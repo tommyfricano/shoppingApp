@@ -15,6 +15,7 @@ import java.util.List;
 
 import edu.uga.cs.shoppingapp.Dialogs.PurchasedItemsDialogFragment;
 import edu.uga.cs.shoppingapp.R;
+import edu.uga.cs.shoppingapp.User.Purchase;
 import edu.uga.cs.shoppingapp.User.User;
 
 /**
@@ -27,6 +28,8 @@ public class PurchaseRecyclerAdapter extends RecyclerView.Adapter<PurchaseRecycl
     private List<User> userList;
     private Context context;
     private FragmentManager child;
+    private User user;
+    private Purchase[] purchases;
 
     public PurchaseRecyclerAdapter(List<User> userList, Context context, FragmentManager child) {
         this.userList = userList;
@@ -37,14 +40,14 @@ public class PurchaseRecyclerAdapter extends RecyclerView.Adapter<PurchaseRecycl
     // The adapter must have a ViewHolder class to "hold" one item to show.
     class ItemHolder extends RecyclerView.ViewHolder {
 
-        TextView user;
+        TextView userView;
         TextView cost;
 
         public ItemHolder(View itemView ) {
             super(itemView);
 
             cost = itemView.findViewById(R.id.itemName4);
-            user = itemView.findViewById( R.id.itemName);
+            userView = itemView.findViewById( R.id.itemName);
         }
     }
 
@@ -58,7 +61,7 @@ public class PurchaseRecyclerAdapter extends RecyclerView.Adapter<PurchaseRecycl
     // This method fills in the values of the Views to show an item
     @Override
     public void onBindViewHolder( ItemHolder holder, int position ) {
-        User user = userList.get( position );
+        user = userList.get( position );
 
         Log.d( DEBUG_TAG, "onBindViewHolder: " + user );
 
@@ -67,7 +70,7 @@ public class PurchaseRecyclerAdapter extends RecyclerView.Adapter<PurchaseRecycl
         String userText = "Purchased by: "+ user.getEmail();
         String costText = "$ " + user.getSpent();
 
-        holder.user.setText( userText);
+        holder.userView.setText( userText);
         holder.cost.setText(costText);
 
         // We can attach an OnClickListener to the itemView of the holder;

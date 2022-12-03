@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -115,10 +116,23 @@ public class CostFragment extends Fragment {
             }
        });
        Button costBtn = getView().findViewById(R.id.button5);
+       TextView costs = getView().findViewById(R.id.textView3);
+
        costBtn.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String results = "";
+                for (int i = 0; i < userList.size(); i++) {
+      //              System.out.println("User " + i + " " + userList.get(i).getEmail());
+                    results += (userList.get(i).
+                            getEmail()
+                            + " spent $"
+                            + userList.get(i)
+                            .getSpent()
+                            + "\n"
+                    );
+                }
+                costs.setText(results);
             }
        });
     }
