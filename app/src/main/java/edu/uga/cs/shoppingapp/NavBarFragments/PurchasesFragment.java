@@ -119,7 +119,7 @@ public class PurchasesFragment extends Fragment implements PurchasedItemsDialogF
     }
 
     public void updateItem( int position, User user, int action ) {
-        if( action == EditCartItemDialogFragment.SAVE ) {
+        if( action == PurchasedItemsDialogFragment.SAVE ) {
             Log.d( DEBUG_TAG, "Updating item at: " + position + "(" + user.getEmail() + ")" );
 
             // Update the recycler view to show the changes in the updated item in that view
@@ -155,40 +155,43 @@ public class PurchasesFragment extends Fragment implements PurchasedItemsDialogF
                 }
             });
         }
-        else if( action == EditCartItemDialogFragment.DELETE ) {
+        else if( action == PurchasedItemsDialogFragment.DELETE ) {
 
             Log.d( DEBUG_TAG, "Deleting item at: " + position + "(" + user.getEmail() + ")" );
 
+            Log.d( DEBUG_TAG, "item list size:" + itemsList.size() );
+
             // remove the deleted item from the list (internal list in the App)
-            itemsList.remove( position );
+            itemsList.remove(position);
 
             // Update the recycler view to remove the deleted item from that view
-            recyclerAdapter.notifyItemRemoved( position );
+            recyclerAdapter.notifyItemRemoved(position);
 
             // Delete this item in Firebase.
             // Note that we are using a specific key (one child in the list)
             DatabaseReference ref = database
                     .getReference()
-                    .child( "purchased/")
-                    .child( user.getKey() );
+                    .child("purchased/")
+                    .child(user.getKey());
 
             // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
             // to maintain items.
-            ref.addListenerForSingleValueEvent( new ValueEventListener() {
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
-                    dataSnapshot.getRef().removeValue().addOnSuccessListener( new OnSuccessListener<Void>() {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    dataSnapshot.getRef().removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.d( DEBUG_TAG, "deleted item at: " + position + "(" + user.getEmail() + ")" );
+                            Log.d(DEBUG_TAG, "deleted item at: " + position + "(" + user.getEmail() + ")");
                             Toast.makeText(getActivity(), "item removed from cart: " + user.getEmail(),
-                                    Toast.LENGTH_SHORT).show();                        }
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     });
                 }
 
                 @Override
-                public void onCancelled( @NonNull DatabaseError databaseError ) {
-                    Log.d( DEBUG_TAG, "failed to remove item from cart: " + position + "(" + user.getEmail() + ")" );
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d(DEBUG_TAG, "failed to remove item from cart: " + position + "(" + user.getEmail() + ")");
                     Toast.makeText(getActivity(), "Failed to remove item from cart: " + user.getEmail(),
                             Toast.LENGTH_SHORT).show();
                 }

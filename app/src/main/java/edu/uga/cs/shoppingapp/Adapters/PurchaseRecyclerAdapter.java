@@ -67,6 +67,8 @@ public class PurchaseRecyclerAdapter extends RecyclerView.Adapter<PurchaseRecycl
 
         String key = user.getKey();
 
+        Log.d( DEBUG_TAG, "user key adpater: " + user.getKey() );
+
         String userText = "Purchased by: "+ user.getEmail();
         String costText = "$ " + user.getSpent();
 

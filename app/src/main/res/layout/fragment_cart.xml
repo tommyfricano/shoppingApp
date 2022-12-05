@@ -11,7 +11,7 @@
         android:id="@+id/panel"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:background="@color/purple_500"
+        android:background="@color/purple_200"
         android:orientation="horizontal"
 
         android:weightSum="16"
@@ -45,6 +45,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:clickable="true"
+        app:backgroundTint="@color/purple_200"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_input_add"

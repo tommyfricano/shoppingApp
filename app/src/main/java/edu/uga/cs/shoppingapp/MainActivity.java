@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent signInIntent = AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
+                        .setTheme(R.style.Theme_ShoppingApp)
                         // this sets our own theme (color scheme, sizing, etc.) for the AuthUI's appearance
 //                        .setTheme(R.style.LoginTheme)
                         .build();
