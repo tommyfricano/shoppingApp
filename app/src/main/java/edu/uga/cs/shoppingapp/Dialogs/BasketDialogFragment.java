@@ -174,6 +174,7 @@ public class BasketDialogFragment extends DialogFragment implements EditCartItem
             for(int i=0; i< itemsList.size();i++){
                 itemsList.get(i).setBuyer(userEmail);
                 spent += itemsList.get(i).getCost();
+          //      System.out.println(spent);
             }
 
             User user = new User(userEmail, spent, itemsList);

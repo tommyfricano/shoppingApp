@@ -79,12 +79,20 @@ public class CostFragment extends Fragment {
             @Override
             public void onDataChange( @NonNull DataSnapshot snapshot ) {
                 // Once we have a DataSnapshot object, we need to iterate over the elements and place them on our job lead list.
-                userList.clear(); // clear the current content; this is inefficient!
+             //   userList.clear(); // clear the current content; this is inefficient!
                 for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
                     Log.d( DEBUG_TAG, "ValueEventListener: " + postSnapshot.getValue(User.class));
                     User user = postSnapshot.getValue(User.class);
                     user.setKey( postSnapshot.getKey() );
+       /*             boolean copy = false;
+                    for (int i = 0; i < userList.size(); i++) {
+                        if (user.getEmail().equals(userList.get(i).getEmail())) {
+                            copy = true;
+                        }
+                        System.out.println(copy);
+                    }*/
                     userList.add( user );
+
                 }
             }
 
@@ -122,16 +130,31 @@ public class CostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String results = "";
+                double average = 0;
+                int numOfUsers = 0;
                 for (int i = 0; i < userList.size(); i++) {
-      //              System.out.println("User " + i + " " + userList.get(i).getEmail());
-                    results += (userList.get(i).
-                            getEmail()
-                            + " spent $"
-                            + userList.get(i)
-                            .getSpent()
-                            + "\n"
-                    );
+                    for (int j = i + 1; j < userList.size(); j++) {
+                        System.out.println("User " + i + " " + userList.get(i).getEmail());
+                        if (userList.get(i).getEmail().equals(userList.get(j).getEmail())) {
+                            userList.get(i).setSpent(userList.get(i).getSpent() + userList.get(j).getSpent());
+                            userList.get(j).setEmail("bad");
+                        }
+
+
+                    }
+                    if (!userList.get(i).getEmail().equals("bad")) {
+                        numOfUsers++;
+                        average += userList.get(i).getSpent();
+                        results += (userList.get(i).
+                                getEmail()
+                                + " spent $"
+                                + userList.get(i)
+                                .getSpent()
+                                + "\n"
+                        );
+                    }
                 }
+                results += "Average money spent: $" + average / numOfUsers;
                 costs.setText(results);
             }
        });
