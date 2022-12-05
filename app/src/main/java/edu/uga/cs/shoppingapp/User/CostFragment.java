@@ -13,7 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.uga.cs.shoppingapp.Adapters.CartRecyclerAdapter;
+import edu.uga.cs.shoppingapp.Dialogs.EditCartItemDialogFragment;
 import edu.uga.cs.shoppingapp.MainActivity;
 import edu.uga.cs.shoppingapp.R;
 
@@ -39,6 +42,7 @@ public class CostFragment extends Fragment {
 
     private List<User> userList;
     private FirebaseDatabase database;
+
 
     public CostFragment() {
         // Required empty public constructor
@@ -132,6 +136,8 @@ public class CostFragment extends Fragment {
                 String results = "";
                 double average = 0;
                 int numOfUsers = 0;
+                DatabaseReference ref;
+
                 for (int i = 0; i < userList.size(); i++) {
                     for (int j = i + 1; j < userList.size(); j++) {
                         System.out.println("User " + i + " " + userList.get(i).getEmail());
@@ -153,10 +159,16 @@ public class CostFragment extends Fragment {
                                 + "\n"
                         );
                     }
+                    database
+                            .getReference()
+                            .child( "purchased/")
+                            .child( userList.get(i).getKey())
+                            .removeValue();
                 }
                 results += "Average money spent: $" + average / numOfUsers;
                 costs.setText(results);
             }
        });
     }
+
 }
